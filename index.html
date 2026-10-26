@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuickTools</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f4f6f8;
+      color: #111827;
+      padding-bottom: 30px;
+    }
+
+    header {
+      background: #2563eb;
+      color: white;
+      padding: 22px 18px;
+      text-align: center;
+      border-radius: 0 0 22px 22px;
+    }
+
+    header h1 {
+      font-size: 28px;
+      margin-bottom: 6px;
+    }
+
+    header p {
+      opacity: 0.9;
+      font-size: 14px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 18px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 10px 0 14px;
+    }
+
+    .tools {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .tool {
+      background: white;
+      border-radius: 18px;
+      padding: 20px 12px;
+      text-align: center;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .tool:active {
+      transform: scale(0.96);
+    }
+
+    .icon {
+      font-size: 34px;
+      margin-bottom: 10px;
+    }
+
+    .tool h3 {
+      font-size: 15px;
+      margin-bottom: 5px;
+    }
+
+    .tool p {
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .welcome {
+      background: white;
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 20px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+    }
+
+    .welcome h2 {
+      margin-bottom: 8px;
+    }
+
+    .welcome p {
+      color: #6b7280;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    footer {
+      text-align: center;
+      color: #9ca3af;
+      font-size: 12px;
+      margin-top: 25px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>⚡ QuickTools</h1>
+    <p>Telefon uchun qulay bepul vositalar</p>
+  </header>
+
+  <main class="container">
+
+    <div class="welcome">
+      <h2>👋 Xush kelibsiz!</h2>
+      <p>
+        QuickTools orqali rasmlar, QR kodlar va boshqa
+        foydali vositalardan foydalanishingiz mumkin.
+      </p>
+    </div>
+
+    <div class="section-title">
+      🛠 Vositalar
+    </div>
+
+    <div class="tools">
+
+      <div class="tool" onclick="openTool('compress')">
+        <div class="icon">🗜️</div>
+        <h3>Rasm siqish</h3>
+        <p>Rasm hajmini kamaytirish</p>
+      </div>
+
+      <div class="tool" onclick="openTool('resize')">
+        <div class="icon">📐</div>
+        <h3>Rasm o‘lchami</h3>
+        <p>O‘lchamni o‘zgartirish</p>
+      </div>
+
+      <div class="tool" onclick="openTool('qr')">
+        <div class="icon">🔲</div>
+        <h3>QR kod</h3>
+        <p>QR kod yaratish</p>
+      </div>
+
+      <div class="tool" onclick="openTool('text')">
+        <div class="icon">📝</div>
+        <h3>Matn vositasi</h3>
+        <p>Matn bilan ishlash</p>
+      </div>
+
+    </div>
+
+    <footer>
+      QuickTools © 2026
+    </footer>
+
+  </main>
+
+  <script>
+    function openTool(tool) {
+      if (tool === "compress") {
+        alert("Rasm siqish funksiyasi tez orada qo‘shiladi.");
+      }
+
+      if (tool === "resize") {
+        alert("Rasm o‘lchamini o‘zgartirish funksiyasi tez orada qo‘shiladi.");
+      }
+
+      if (tool === "qr") {
+        alert("QR kod yaratish funksiyasi tez orada qo‘shiladi.");
+      }
+
+      if (tool === "text") {
+        alert("Matn vositasi tez orada qo‘shiladi.");
+      }
+    }
+  </script>
+
+</body>
+</html>
