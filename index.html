@@ -2,12 +2,14 @@
 <html lang="uz">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#2563eb">
   <title>QuickTools</title>
 
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -17,15 +19,22 @@
     }
 
     header {
-      padding: 26px 18px;
-      text-align: center;
-      color: white;
       background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: white;
+      text-align: center;
+      padding: 26px 18px;
       border-radius: 0 0 25px 25px;
     }
 
-    header h1 { margin: 0 0 8px; font-size: 30px; }
-    header p { margin: 0; font-size: 14px; }
+    header h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 14px;
+    }
 
     main {
       width: min(100% - 28px, 500px);
@@ -36,29 +45,37 @@
       background: white;
       padding: 22px;
       border-radius: 20px;
-      box-shadow: 0 5px 20px #0f172a0c;
       margin-bottom: 18px;
+      box-shadow: 0 5px 20px rgba(15, 23, 42, 0.08);
     }
 
-    h2 { font-size: 21px; margin: 0 0 10px; }
-    .muted { color: #64748b; font-size: 14px; line-height: 1.5; }
+    h2 {
+      margin: 0 0 10px;
+      font-size: 21px;
+    }
+
+    .muted {
+      color: #64748b;
+      font-size: 14px;
+      line-height: 1.5;
+    }
 
     label {
       display: block;
-      font-weight: bold;
       margin: 18px 0 8px;
+      font-weight: bold;
       font-size: 14px;
     }
 
     textarea {
       width: 100%;
       min-height: 105px;
-      resize: vertical;
+      padding: 13px;
       border: 1px solid #cbd5e1;
       border-radius: 12px;
-      padding: 13px;
-      font: inherit;
       font-size: 16px;
+      font-family: Arial, sans-serif;
+      resize: vertical;
       outline-color: #2563eb;
     }
 
@@ -67,14 +84,30 @@
       border: 0;
       border-radius: 12px;
       padding: 14px;
+      margin-top: 12px;
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
-      margin-top: 12px;
     }
 
-    .primary { background: #2563eb; color: white; }
-    .secondary { background: #e2e8f0; color: #172033; }
+    .primary {
+      background: #2563eb;
+      color: white;
+    }
+
+    .secondary {
+      background: #e2e8f0;
+      color: #172033;
+    }
+
+    .success {
+      background: #16a34a;
+      color: white;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+    }
 
     #result {
       display: none;
@@ -83,14 +116,19 @@
     }
 
     #qrImage {
-      width: 240px;
-      max-width: 100%;
       display: block;
-      margin: 16px auto;
+      width: 260px;
+      max-width: 100%;
+      margin: 18px auto;
       border: 8px solid white;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.1);
     }
 
-    .error { color: #dc2626; font-size: 14px; }
+    #message {
+      color: #dc2626;
+      font-size: 14px;
+      line-height: 1.5;
+    }
 
     footer {
       text-align: center;
@@ -102,156 +140,243 @@
 </head>
 
 <body>
-  <header>
-    <h1>⚡ QuickTools</h1>
-    <p>Bepul va qulay telefon vositalari</p>
-  </header>
 
-  <main>
-    <section class="card">
-      <h2>👋 Xush kelibsiz!</h2>
-      <p class="muted">
-        Kerakli vositani tanlang. Hozir QR kod yaratish
-        funksiyasidan foydalanishingiz mumkin.
-      </p>
-    </section>
+<header>
+  <h1>⚡ QuickTools</h1>
+  <p>Bepul va qulay telefon vositalari</p>
+</header>
 
-    <section class="card">
-      <h2>🔲 QR kod yaratish</h2>
-      <p class="muted">
-        Matn yoki havolani kiriting va QR kod yarating.
-      </p>
+<main>
 
-      <label for="qrText">Matn yoki havola</label>
-      <textarea id="qrText"
-        maxlength="2000"
-        placeholder="Masalan: https://telegram.org"></textarea>
+  <section class="card">
+    <h2>🔲 QR kod yaratish</h2>
 
-      <button class="primary" id="createBtn">
-        ✨ QR kod yaratish
+    <p class="muted">
+      Matn yoki havolani yozing va QR kod yarating.
+    </p>
+
+    <label for="qrText">Matn yoki havola</label>
+
+    <textarea
+      id="qrText"
+      maxlength="2000"
+      placeholder="Masalan: https://telegram.org"
+    ></textarea>
+
+    <button class="primary" id="createBtn">
+      ✨ QR kod yaratish
+    </button>
+
+    <p id="message"></p>
+
+    <div id="result">
+
+      <h3>QR kodingiz tayyor! ✅</h3>
+
+      <img id="qrImage" alt="QR kod">
+
+      <button class="success" id="saveBtn">
+        📥 PNG sifatida saqlash
       </button>
 
-      <p id="message" class="error" role="status"></p>
+      <button class="secondary" id="shareBtn">
+        📤 Ulashish / Saqlash
+      </button>
 
-      <div id="result">
-        <h3>QR kodingiz tayyor!</h3>
-        <img id="qrImage" alt="Yaratilgan QR kod">
-        <button class="primary" id="saveBtn">
-          📥 PNG sifatida saqlash
-        </button>
-        <button class="secondary" id="resetBtn">
-          🔄 Yangidan yaratish
-        </button>
-      </div>
-    </section>
+      <button class="secondary" id="resetBtn">
+        🔄 Yangidan yaratish
+      </button>
 
-    <section class="card">
-      <h2>🛠 Boshqa vositalar</h2>
-      <p class="muted">
-        📷 Rasm siqish — keyingi yangilanishda.<br><br>
-        📐 Rasm o‘lchamini o‘zgartirish — keyingi yangilanishda.<br><br>
-        📝 Matn vositasi — keyingi yangilanishda.
-      </p>
-    </section>
-  </main>
+    </div>
+  </section>
 
-  <footer>QuickTools © 2026</footer>
+  <section class="card">
+    <h2>🛠 Keyingi vositalar</h2>
 
-  <script>
-    const textInput = document.getElementById("qrText");
-    const createBtn = document.getElementById("createBtn");
-    const saveBtn = document.getElementById("saveBtn");
-    const resetBtn = document.getElementById("resetBtn");
-    const result = document.getElementById("result");
-    const qrImage = document.getElementById("qrImage");
-    const message = document.getElementById("message");
+    <p class="muted">
+      📷 Rasm siqish<br><br>
+      📐 Rasm o‘lchamini o‘zgartirish<br><br>
+      📝 Matn vositasi
+    </p>
+  </section>
 
-    let currentQR = "";
+</main>
 
-    createBtn.addEventListener("click", async () => {
-      const value = textInput.value.trim();
+<footer>
+  QuickTools © 2026
+</footer>
 
-      message.textContent = "";
-      result.style.display = "none";
+<script>
 
-      if (!value) {
-        message.textContent = "Iltimos, avval matn yoki havola yozing.";
-        return;
+const textInput = document.getElementById("qrText");
+const createBtn = document.getElementById("createBtn");
+const saveBtn = document.getElementById("saveBtn");
+const shareBtn = document.getElementById("shareBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+const result = document.getElementById("result");
+const qrImage = document.getElementById("qrImage");
+const message = document.getElementById("message");
+
+let qrBlob = null;
+let qrUrl = null;
+
+
+/* QR YARATISH */
+
+createBtn.addEventListener("click", async () => {
+
+  const text = textInput.value.trim();
+
+  message.textContent = "";
+  result.style.display = "none";
+
+  if (!text) {
+    message.textContent = "Avval matn yoki havola yozing.";
+    return;
+  }
+
+  createBtn.disabled = true;
+  createBtn.textContent = "Yaratilmoqda...";
+
+  try {
+
+    const qrApi =
+      "https://api.qrserver.com/v1/create-qr-code/?size=600x600&format=png&data="
+      + encodeURIComponent(text);
+
+    const response = await fetch(qrApi);
+
+    if (!response.ok) {
+      throw new Error("QR yaratilmadi");
+    }
+
+    qrBlob = await response.blob();
+
+    if (!qrBlob.type.includes("image")) {
+      throw new Error("PNG olinmadi");
+    }
+
+    if (qrUrl) {
+      URL.revokeObjectURL(qrUrl);
+    }
+
+    qrUrl = URL.createObjectURL(qrBlob);
+
+    qrImage.src = qrUrl;
+
+    result.style.display = "block";
+
+  } catch (error) {
+
+    message.textContent =
+      "QR yaratishda xatolik yuz berdi. Internetni tekshiring.";
+
+  } finally {
+
+    createBtn.disabled = false;
+    createBtn.textContent = "✨ QR kod yaratish";
+
+  }
+
+});
+
+
+/* PNG YUKLAB OLISH */
+
+saveBtn.addEventListener("click", () => {
+
+  if (!qrBlob) {
+    message.textContent = "Avval QR kod yarating.";
+    return;
+  }
+
+  const link = document.createElement("a");
+
+  link.href = qrUrl;
+  link.download = "QuickTools-QR.png";
+
+  document.body.appendChild(link);
+
+  link.click();
+
+  document.body.removeChild(link);
+
+});
+
+
+/* ANDROID SHARE / SAQLASH */
+
+shareBtn.addEventListener("click", async () => {
+
+  if (!qrBlob) {
+    message.textContent = "Avval QR kod yarating.";
+    return;
+  }
+
+  try {
+
+    const file = new File(
+      [qrBlob],
+      "QuickTools-QR.png",
+      {
+        type: "image/png"
       }
+    );
 
-      createBtn.disabled = true;
-      createBtn.textContent = "Yaratilmoqda...";
+    if (
+      navigator.share &&
+      navigator.canShare &&
+      navigator.canShare({ files: [file] })
+    ) {
 
-      try {
-        const url = new URL(
-          "https://api.qrserver.com/v1/create-qr-code/"
-        );
+      await navigator.share({
+        title: "QuickTools QR",
+        text: "QuickTools orqali yaratilgan QR kod",
+        files: [file]
+      });
 
-        url.searchParams.set("size", "400x400");
-        url.searchParams.set("data", value);
-        url.searchParams.set("format", "png");
+    } else {
 
-        const response = await fetch(url);
+      message.textContent =
+        "Ulashish mavjud emas. PNG saqlash tugmasini bosing.";
 
-        if (!response.ok) {
-          throw new Error("QR xizmatida xatolik.");
-        }
+    }
 
-        const blob = await response.blob();
+  } catch (error) {
 
-        if (!blob.type.includes("image")) {
-          throw new Error("Rasm yaratilmadi.");
-        }
+    if (error.name !== "AbortError") {
+      message.textContent =
+        "Ulashishda xatolik yuz berdi.";
+    }
 
-        currentQR = URL.createObjectURL(blob);
-        qrImage.src = currentQR;
-        result.style.display = "block";
-      } catch (error) {
-        message.textContent =
-          "QR yaratilmadi. Internetni tekshirib, qayta urinib ko‘ring.";
-      } finally {
-        createBtn.disabled = false;
-        createBtn.textContent = "✨ QR kod yaratish";
-      }
-    });
+  }
 
-    saveBtn.addEventListener("click", async () => {
-      if (!currentQR) return;
+});
 
-      try {
-        const response = await fetch(currentQR);
-        const blob = await response.blob();
-        const file = new File([blob], "QuickTools-QR.png", {
-          type: "image/png"
-        });
 
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            files: [file],
-            title: "QuickTools QR kodi"
-          });
-        } else {
-          const link = document.createElement("a");
-          link.href = currentQR;
-          link.download = "QuickTools-QR.png";
-          link.click();
-        }
-      } catch (error) {
-        message.textContent =
-          "Saqlash amalga oshmadi. QR kodni qayta yarating.";
-      }
-    });
+/* RESET */
 
-    resetBtn.addEventListener("click", () => {
-      textInput.value = "";
-      result.style.display = "none";
-      message.textContent = "";
+resetBtn.addEventListener("click", () => {
 
-      if (currentQR) URL.revokeObjectURL(currentQR);
-      currentQR = "";
+  textInput.value = "";
 
-      textInput.focus();
-    });
-  </script>
+  result.style.display = "none";
+
+  message.textContent = "";
+
+  if (qrUrl) {
+    URL.revokeObjectURL(qrUrl);
+    qrUrl = null;
+  }
+
+  qrBlob = null;
+
+  textInput.focus();
+
+});
+
+</script>
+
 </body>
 </html>
