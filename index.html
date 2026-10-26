@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#2563eb">
+
   <title>QuickTools</title>
 
   <style>
@@ -54,6 +55,10 @@
       font-size: 21px;
     }
 
+    h3 {
+      margin-top: 20px;
+    }
+
     .muted {
       color: #64748b;
       font-size: 14px;
@@ -67,16 +72,32 @@
       font-size: 14px;
     }
 
-    textarea {
+    textarea,
+    input[type="number"] {
       width: 100%;
-      min-height: 105px;
       padding: 13px;
       border: 1px solid #cbd5e1;
       border-radius: 12px;
       font-size: 16px;
       font-family: Arial, sans-serif;
-      resize: vertical;
       outline-color: #2563eb;
+    }
+
+    textarea {
+      min-height: 105px;
+      resize: vertical;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      padding: 12px;
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      background: #f8fafc;
+    }
+
+    input[type="range"] {
+      width: 100%;
     }
 
     button {
@@ -90,8 +111,17 @@
       cursor: pointer;
     }
 
+    button:disabled {
+      opacity: 0.55;
+    }
+
     .primary {
       background: #2563eb;
+      color: white;
+    }
+
+    .success {
+      background: #16a34a;
       color: white;
     }
 
@@ -100,34 +130,40 @@
       color: #172033;
     }
 
-    .success {
-      background: #16a34a;
-      color: white;
-    }
-
-    button:disabled {
-      opacity: 0.6;
-    }
-
-    #result {
-      display: none;
-      text-align: center;
-      margin-top: 22px;
-    }
-
-    #qrImage {
+    .preview {
       display: block;
-      width: 260px;
-      max-width: 100%;
-      margin: 18px auto;
-      border: 8px solid white;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+      width: 100%;
+      max-height: 300px;
+      object-fit: contain;
+      margin-top: 15px;
+      border-radius: 12px;
+      background: #f8fafc;
     }
 
-    #message {
+    .info {
+      background: #eff6ff;
+      padding: 12px;
+      border-radius: 12px;
+      margin-top: 15px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .result-box {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .error {
       color: #dc2626;
       font-size: 14px;
       line-height: 1.5;
+    }
+
+    .success-text {
+      color: #15803d;
+      font-weight: bold;
+      font-size: 14px;
     }
 
     footer {
@@ -135,6 +171,12 @@
       color: #64748b;
       font-size: 12px;
       padding: 15px;
+    }
+
+    .tool-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
   </style>
 </head>
@@ -148,14 +190,21 @@
 
 <main>
 
+  <!-- QR GENERATOR -->
+
   <section class="card">
-    <h2>🔲 QR kod yaratish</h2>
+
+    <div class="tool-title">
+      <h2>🔲 QR kod yaratish</h2>
+    </div>
 
     <p class="muted">
       Matn yoki havolani yozing va QR kod yarating.
     </p>
 
-    <label for="qrText">Matn yoki havola</label>
+    <label for="qrText">
+      Matn yoki havola
+    </label>
 
     <textarea
       id="qrText"
@@ -163,41 +212,131 @@
       placeholder="Masalan: https://telegram.org"
     ></textarea>
 
-    <button class="primary" id="createBtn">
+    <button class="primary" id="createQrBtn">
       ✨ QR kod yaratish
     </button>
 
-    <p id="message"></p>
+    <p id="qrMessage" class="error"></p>
 
-    <div id="result">
+    <div id="qrResult" class="result-box">
 
       <h3>QR kodingiz tayyor! ✅</h3>
 
-      <img id="qrImage" alt="QR kod">
+      <img
+        id="qrImage"
+        class="preview"
+        alt="QR kod"
+      >
 
-      <button class="success" id="saveBtn">
+      <button class="success" id="saveQrBtn">
         📥 PNG sifatida saqlash
       </button>
 
-      <button class="secondary" id="shareBtn">
+      <button class="secondary" id="shareQrBtn">
         📤 Ulashish / Saqlash
       </button>
 
-      <button class="secondary" id="resetBtn">
+      <button class="secondary" id="resetQrBtn">
         🔄 Yangidan yaratish
       </button>
 
     </div>
+
   </section>
 
+
+  <!-- IMAGE COMPRESSOR -->
+
   <section class="card">
+
+    <div class="tool-title">
+      <h2>📷 Rasm siqish</h2>
+    </div>
+
+    <p class="muted">
+      Rasm hajmini kamaytiring. Rasm telefoningizning o‘zida
+      qayta ishlanadi.
+    </p>
+
+    <label for="imageInput">
+      Rasm tanlang
+    </label>
+
+    <input
+      type="file"
+      id="imageInput"
+      accept="image/*"
+    >
+
+    <div id="imageInfo" class="info" style="display:none;"></div>
+
+    <img
+      id="originalPreview"
+      class="preview"
+      style="display:none;"
+      alt="Asl rasm"
+    >
+
+    <label for="quality">
+      Sifat: <span id="qualityValue">70</span>%
+    </label>
+
+    <input
+      type="range"
+      id="quality"
+      min="20"
+      max="95"
+      value="70"
+    >
+
+    <button
+      class="primary"
+      id="compressBtn"
+      disabled
+    >
+      🗜️ Rasmni siqish
+    </button>
+
+    <p id="compressMessage" class="error"></p>
+
+    <div id="compressResult" class="result-box">
+
+      <h3>Siqilgan rasm tayyor! ✅</h3>
+
+      <div id="sizeInfo" class="info"></div>
+
+      <img
+        id="compressedPreview"
+        class="preview"
+        alt="Siqilgan rasm"
+      >
+
+      <button class="success" id="downloadImageBtn">
+        📥 JPG sifatida saqlash
+      </button>
+
+      <button class="secondary" id="shareImageBtn">
+        📤 Ulashish / Saqlash
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- FUTURE TOOLS -->
+
+  <section class="card">
+
     <h2>🛠 Keyingi vositalar</h2>
 
     <p class="muted">
-      📷 Rasm siqish<br><br>
       📐 Rasm o‘lchamini o‘zgartirish<br><br>
-      📝 Matn vositasi
+      ✂️ Rasm kesish<br><br>
+      📝 Rasmga matn qo‘shish<br><br>
+      🔄 JPG / PNG konvertor
     </p>
+
   </section>
 
 </main>
@@ -206,55 +345,61 @@
   QuickTools © 2026
 </footer>
 
+
 <script>
 
-const textInput = document.getElementById("qrText");
-const createBtn = document.getElementById("createBtn");
-const saveBtn = document.getElementById("saveBtn");
-const shareBtn = document.getElementById("shareBtn");
-const resetBtn = document.getElementById("resetBtn");
+/* =====================================================
+   QR GENERATOR
+===================================================== */
 
-const result = document.getElementById("result");
+const qrText = document.getElementById("qrText");
+const createQrBtn = document.getElementById("createQrBtn");
+const saveQrBtn = document.getElementById("saveQrBtn");
+const shareQrBtn = document.getElementById("shareQrBtn");
+const resetQrBtn = document.getElementById("resetQrBtn");
+
+const qrResult = document.getElementById("qrResult");
 const qrImage = document.getElementById("qrImage");
-const message = document.getElementById("message");
+const qrMessage = document.getElementById("qrMessage");
 
 let qrBlob = null;
 let qrUrl = null;
 
 
-/* QR YARATISH */
+createQrBtn.addEventListener("click", async () => {
 
-createBtn.addEventListener("click", async () => {
+  const text = qrText.value.trim();
 
-  const text = textInput.value.trim();
-
-  message.textContent = "";
-  result.style.display = "none";
+  qrMessage.textContent = "";
+  qrResult.style.display = "none";
 
   if (!text) {
-    message.textContent = "Avval matn yoki havola yozing.";
+    qrMessage.textContent =
+      "Avval matn yoki havola yozing.";
     return;
   }
 
-  createBtn.disabled = true;
-  createBtn.textContent = "Yaratilmoqda...";
+  createQrBtn.disabled = true;
+  createQrBtn.textContent =
+    "Yaratilmoqda...";
 
   try {
 
-    const qrApi =
-      "https://api.qrserver.com/v1/create-qr-code/?size=600x600&format=png&data="
-      + encodeURIComponent(text);
+    const api =
+      "https://api.qrserver.com/v1/create-qr-code/" +
+      "?size=600x600&format=png&data=" +
+      encodeURIComponent(text);
 
-    const response = await fetch(qrApi);
+    const response = await fetch(api);
 
     if (!response.ok) {
-      throw new Error("QR yaratilmadi");
+      throw new Error();
     }
 
     qrBlob = await response.blob();
 
     if (!qrBlob.type.includes("image")) {
-      throw new Error("PNG olinmadi");
+      throw new Error();
     }
 
     if (qrUrl) {
@@ -265,33 +410,30 @@ createBtn.addEventListener("click", async () => {
 
     qrImage.src = qrUrl;
 
-    result.style.display = "block";
+    qrResult.style.display = "block";
 
   } catch (error) {
 
-    message.textContent =
-      "QR yaratishda xatolik yuz berdi. Internetni tekshiring.";
+    qrMessage.textContent =
+      "QR yaratilmadi. Internetni tekshiring.";
 
   } finally {
 
-    createBtn.disabled = false;
-    createBtn.textContent = "✨ QR kod yaratish";
+    createQrBtn.disabled = false;
 
+    createQrBtn.textContent =
+      "✨ QR kod yaratish";
   }
 
 });
 
 
-/* PNG YUKLAB OLISH */
+saveQrBtn.addEventListener("click", () => {
 
-saveBtn.addEventListener("click", () => {
+  if (!qrUrl) return;
 
-  if (!qrBlob) {
-    message.textContent = "Avval QR kod yarating.";
-    return;
-  }
-
-  const link = document.createElement("a");
+  const link =
+    document.createElement("a");
 
   link.href = qrUrl;
   link.download = "QuickTools-QR.png";
@@ -305,14 +447,9 @@ saveBtn.addEventListener("click", () => {
 });
 
 
-/* ANDROID SHARE / SAQLASH */
+shareQrBtn.addEventListener("click", async () => {
 
-shareBtn.addEventListener("click", async () => {
-
-  if (!qrBlob) {
-    message.textContent = "Avval QR kod yarating.";
-    return;
-  }
+  if (!qrBlob) return;
 
   try {
 
@@ -327,26 +464,373 @@ shareBtn.addEventListener("click", async () => {
     if (
       navigator.share &&
       navigator.canShare &&
-      navigator.canShare({ files: [file] })
+      navigator.canShare({
+        files: [file]
+      })
     ) {
 
       await navigator.share({
         title: "QuickTools QR",
-        text: "QuickTools orqali yaratilgan QR kod",
+        text: "QuickTools QR kodi",
         files: [file]
       });
 
     } else {
 
-      message.textContent =
-        "Ulashish mavjud emas. PNG saqlash tugmasini bosing.";
+      qrMessage.textContent =
+        "Ulashish bu qurilmada mavjud emas.";
 
     }
 
   } catch (error) {
 
     if (error.name !== "AbortError") {
-      message.textContent =
+
+      qrMessage.textContent =
+        "Ulashishda xatolik yuz berdi.";
+
+    }
+
+  }
+
+});
+
+
+resetQrBtn.addEventListener("click", () => {
+
+  qrText.value = "";
+
+  qrResult.style.display = "none";
+
+  qrMessage.textContent = "";
+
+  if (qrUrl) {
+    URL.revokeObjectURL(qrUrl);
+  }
+
+  qrUrl = null;
+  qrBlob = null;
+
+});
+
+
+/* =====================================================
+   IMAGE COMPRESSOR
+===================================================== */
+
+const imageInput =
+  document.getElementById("imageInput");
+
+const originalPreview =
+  document.getElementById("originalPreview");
+
+const imageInfo =
+  document.getElementById("imageInfo");
+
+const quality =
+  document.getElementById("quality");
+
+const qualityValue =
+  document.getElementById("qualityValue");
+
+const compressBtn =
+  document.getElementById("compressBtn");
+
+const compressMessage =
+  document.getElementById("compressMessage");
+
+const compressResult =
+  document.getElementById("compressResult");
+
+const compressedPreview =
+  document.getElementById("compressedPreview");
+
+const sizeInfo =
+  document.getElementById("sizeInfo");
+
+const downloadImageBtn =
+  document.getElementById("downloadImageBtn");
+
+const shareImageBtn =
+  document.getElementById("shareImageBtn");
+
+let selectedImage = null;
+let compressedBlob = null;
+let compressedUrl = null;
+
+
+quality.addEventListener("input", () => {
+
+  qualityValue.textContent =
+    quality.value;
+
+});
+
+
+imageInput.addEventListener("change", () => {
+
+  compressMessage.textContent = "";
+
+  compressResult.style.display =
+    "none";
+
+  const file =
+    imageInput.files[0];
+
+  if (!file) {
+    compressBtn.disabled = true;
+    return;
+  }
+
+  if (!file.type.startsWith("image/")) {
+
+    compressMessage.textContent =
+      "Iltimos, rasm faylini tanlang.";
+
+    compressBtn.disabled = true;
+    return;
+  }
+
+  selectedImage = file;
+
+  const size =
+    formatBytes(file.size);
+
+  imageInfo.style.display =
+    "block";
+
+  imageInfo.innerHTML =
+    "📄 Fayl: <b>" +
+    escapeHtml(file.name) +
+    "</b><br>" +
+    "📦 Hajmi: <b>" +
+    size +
+    "</b>";
+
+  const reader =
+    new FileReader();
+
+  reader.onload = (event) => {
+
+    originalPreview.src =
+      event.target.result;
+
+    originalPreview.style.display =
+      "block";
+  };
+
+  reader.readAsDataURL(file);
+
+  compressBtn.disabled = false;
+
+});
+
+
+compressBtn.addEventListener("click", async () => {
+
+  if (!selectedImage) return;
+
+  compressMessage.textContent = "";
+
+  compressBtn.disabled = true;
+
+  compressBtn.textContent =
+    "Siqilmoqda...";
+
+  try {
+
+    const image =
+      await loadImage(selectedImage);
+
+    const maxWidth = 2000;
+
+    let width =
+      image.naturalWidth;
+
+    let height =
+      image.naturalHeight;
+
+    if (width > maxWidth) {
+
+      const ratio =
+        maxWidth / width;
+
+      width =
+        Math.round(width * ratio);
+
+      height =
+        Math.round(height * ratio);
+    }
+
+    const canvas =
+      document.createElement("canvas");
+
+    canvas.width = width;
+    canvas.height = height;
+
+    const ctx =
+      canvas.getContext("2d");
+
+    ctx.fillStyle = "#ffffff";
+
+    ctx.fillRect(
+      0,
+      0,
+      width,
+      height
+    );
+
+    ctx.drawImage(
+      image,
+      0,
+      0,
+      width,
+      height
+    );
+
+    const qualityNumber =
+      Number(quality.value) / 100;
+
+    compressedBlob =
+      await canvasToBlob(
+        canvas,
+        "image/jpeg",
+        qualityNumber
+      );
+
+    if (!compressedBlob) {
+      throw new Error();
+    }
+
+    if (compressedUrl) {
+      URL.revokeObjectURL(
+        compressedUrl
+      );
+    }
+
+    compressedUrl =
+      URL.createObjectURL(
+        compressedBlob
+      );
+
+    compressedPreview.src =
+      compressedUrl;
+
+    const oldSize =
+      formatBytes(
+        selectedImage.size
+      );
+
+    const newSize =
+      formatBytes(
+        compressedBlob.size
+      );
+
+    const saved =
+      Math.max(
+        0,
+        Math.round(
+          (1 -
+            compressedBlob.size /
+            selectedImage.size) * 100
+        )
+      );
+
+    sizeInfo.innerHTML =
+      "📦 Asl hajmi: <b>" +
+      oldSize +
+      "</b><br>" +
+      "🗜️ Yangi hajmi: <b>" +
+      newSize +
+      "</b><br>" +
+      "💾 Tejaldi: <b>" +
+      saved +
+      "%</b>";
+
+    compressResult.style.display =
+      "block";
+
+  } catch (error) {
+
+    compressMessage.textContent =
+      "Rasmni siqishda xatolik yuz berdi.";
+
+  } finally {
+
+    compressBtn.disabled = false;
+
+    compressBtn.textContent =
+      "🗜️ Rasmni siqish";
+  }
+
+});
+
+
+downloadImageBtn.addEventListener("click", () => {
+
+  if (!compressedUrl) return;
+
+  const link =
+    document.createElement("a");
+
+  link.href =
+    compressedUrl;
+
+  link.download =
+    "QuickTools-compressed.jpg";
+
+  document.body.appendChild(link);
+
+  link.click();
+
+  document.body.removeChild(link);
+
+});
+
+
+shareImageBtn.addEventListener("click", async () => {
+
+  if (!compressedBlob) return;
+
+  try {
+
+    const file =
+      new File(
+        [compressedBlob],
+        "QuickTools-compressed.jpg",
+        {
+          type: "image/jpeg"
+        }
+      );
+
+    if (
+      navigator.share &&
+      navigator.canShare &&
+      navigator.canShare({
+        files: [file]
+      })
+    ) {
+
+      await navigator.share({
+        title:
+          "QuickTools siqilgan rasm",
+        text:
+          "QuickTools orqali siqilgan rasm",
+        files: [file]
+      });
+
+    } else {
+
+      compressMessage.textContent =
+        "Ulashish mavjud emas. JPG saqlash tugmasini bosing.";
+
+    }
+
+  } catch (error) {
+
+    if (error.name !== "AbortError") {
+
+      compressMessage.textContent =
         "Ulashishda xatolik yuz berdi.";
     }
 
@@ -355,28 +839,105 @@ shareBtn.addEventListener("click", async () => {
 });
 
 
-/* RESET */
+/* =====================================================
+   YORDAMCHI FUNKSIYALAR
+===================================================== */
 
-resetBtn.addEventListener("click", () => {
+function loadImage(file) {
 
-  textInput.value = "";
+  return new Promise(
+    (resolve, reject) => {
 
-  result.style.display = "none";
+      const reader =
+        new FileReader();
 
-  message.textContent = "";
+      reader.onload = () => {
 
-  if (qrUrl) {
-    URL.revokeObjectURL(qrUrl);
-    qrUrl = null;
+        const image =
+          new Image();
+
+        image.onload = () =>
+          resolve(image);
+
+        image.onerror = reject;
+
+        image.src =
+          reader.result;
+      };
+
+      reader.onerror =
+        reject;
+
+      reader.readAsDataURL(file);
+    }
+  );
+}
+
+
+function canvasToBlob(
+  canvas,
+  type,
+  quality
+) {
+
+  return new Promise(
+    (resolve) => {
+
+      canvas.toBlob(
+        resolve,
+        type,
+        quality
+      );
+
+    }
+  );
+}
+
+
+function formatBytes(bytes) {
+
+  if (bytes === 0) {
+    return "0 B";
   }
 
-  qrBlob = null;
+  const units = [
+    "B",
+    "KB",
+    "MB",
+    "GB"
+  ];
 
-  textInput.focus();
+  const index =
+    Math.floor(
+      Math.log(bytes) /
+      Math.log(1024)
+    );
 
-});
+  return (
+    parseFloat(
+      (bytes /
+        Math.pow(
+          1024,
+          index
+        )).toFixed(2)
+    ) +
+    " " +
+    units[index]
+  );
+}
+
+
+function escapeHtml(text) {
+
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
 </script>
 
 </body>
-</html>
+  </html>
