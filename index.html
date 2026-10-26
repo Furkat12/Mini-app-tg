@@ -2,190 +2,508 @@
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>QuickTools</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111827">
+<title>QuickTools — Bepul vositalar</title>
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f1f5fb;color:#172033}
-header{background:#2457e6;color:white;text-align:center;padding:25px 15px}
-header h1{margin:0 0 8px}
-nav{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;background:white;padding:12px;position:sticky;top:0}
-nav a{background:#eaf0ff;color:#2457e6;padding:9px 12px;border-radius:9px;text-decoration:none;font-weight:bold}
-main{max-width:760px;margin:20px auto;padding:0 12px}
-.card{background:white;border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 4px 16px #0000000d}
-h2{font-size:21px;margin:0 0 14px}
-label{display:block;font-weight:bold;margin:12px 0 6px}
-input[type=text],input[type=number],select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:10px;font-size:16px}
-input[type=file]{width:100%;padding:10px 0}
-input[type=range]{width:100%}
-button,.download{display:inline-block;border:0;border-radius:10px;padding:12px 16px;background:#2457e6;color:white;font-weight:bold;font-size:16px;text-decoration:none;cursor:pointer;margin-top:10px}
-.status{margin-top:12px;overflow-wrap:anywhere}
-.preview{display:block;max-width:100%;max-height:340px;margin:12px auto;border-radius:10px}
-#qrResult img{display:block;max-width:100%;margin:14px auto}
-.small{font-size:13px;color:#64748b}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f1f5f9;
+  color:#172033;
+}
+header{
+  background:#111827;
+  color:white;
+  padding:24px 16px;
+  text-align:center;
+}
+header h1{margin:0 0 8px;font-size:30px}
+header p{margin:0;color:#cbd5e1}
+main{max-width:720px;margin:20px auto;padding:0 14px}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tab{
+  border:0;border-radius:12px;padding:13px 5px;
+  background:#dbe3ef;color:#172033;
+  font-weight:bold;cursor:pointer;font-size:13px;
+}
+.tab.active{background:#2563eb;color:white}
+.panel{
+  display:none;background:white;border-radius:16px;
+  padding:18px;margin-top:14px;
+  box-shadow:0 4px 18px #0000000c;
+}
+.panel.active{display:block}
+h2{margin-top:0;font-size:22px}
+label{display:block;font-weight:bold;margin:16px 0 8px}
+input[type="text"],input[type="number"],select{
+  width:100%;padding:12px;border:1px solid #cbd5e1;
+  border-radius:9px;font-size:16px;background:white;
+}
+input[type="file"]{width:100%;padding:10px 0}
+input[type="range"]{width:100%}
+button.action{
+  width:100%;padding:13px;margin-top:14px;
+  border:0;border-radius:10px;background:#2563eb;
+  color:white;font-size:16px;font-weight:bold;cursor:pointer;
+}
+button.action:disabled{opacity:.5}
+button.secondary{background:#0f766e}
+.preview{
+  margin-top:16px;text-align:center;overflow-wrap:anywhere;
+}
+.preview img{max-width:100%;height:auto;border-radius:8px}
+#qrOutput canvas,#qrOutput img{max-width:100%;height:auto}
+.info{
+  background:#eff6ff;padding:12px;border-radius:9px;
+  font-size:14px;line-height:1.5;margin-top:12px;
+}
+.status{font-size:14px;line-height:1.5;overflow-wrap:anywhere}
+footer{text-align:center;color:#64748b;padding:25px 12px;font-size:13px}
 </style>
 </head>
+
 <body>
 <header>
-<h1>🧰 QuickTools</h1>
-<p>Foydali vositalar — bepul va qulay</p>
+  <h1>⚡ QuickTools</h1>
+  <p>Bepul va qulay onlayn vositalar</p>
 </header>
 
-<nav>
-<a href="#qr">QR kod</a>
-<a href="#compress">Rasm siqish</a>
-<a href="#resize">Rasm o‘lchami</a>
-</nav>
-
 <main>
-<section class="card" id="qr">
-<h2>🔳 QR kod yaratish</h2>
-<label for="qrText">Matn yoki havola kiriting</label>
-<input id="qrText" type="text" placeholder="https://example.com">
-<button id="makeQr" type="button">QR kod yaratish</button>
-<div id="qrStatus" class="status"></div>
-<div id="qrResult"></div>
-</section>
+  <div class="tabs">
+    <button class="tab active" data-tab="qr">🔳 QR-kod</button>
+    <button class="tab" data-tab="compress">📷 Rasm siqish</button>
+    <button class="tab" data-tab="resize">📐 Rasm o‘lchami</button>
+  </div>
 
-<section class="card" id="compress">
-<h2>🖼️ Rasm siqish</h2>
-<label for="compressFile">Rasm tanlang</label>
-<input id="compressFile" type="file" accept="image/*">
-<label for="quality">Sifat: <span id="qualityValue">70%</span></label>
-<input id="quality" type="range" min="10" max="95" value="70">
-<button id="compressBtn" type="button">Rasmni siqish</button>
-<div id="compressStatus" class="status"></div>
-<img id="compressPreview" class="preview" alt="" hidden>
-<a id="compressDownload" class="download" hidden download="quicktools-compressed.jpg">Siqilgan rasmni yuklab olish</a>
-</section>
+  <!-- QR-KOD -->
+  <section class="panel active" id="qr">
+    <h2>🔳 QR-kod yaratish</h2>
+    <label for="qrText">Matn yoki havola</label>
+    <input id="qrText" type="text" placeholder="Masalan: https://example.com">
+    <button class="action" id="makeQR">QR-kod yaratish</button>
+    <div class="preview" id="qrOutput"></div>
+    <button class="action secondary" id="downloadQR" hidden>
+      ⬇️ QR-kodni PNG qilib saqlash
+    </button>
+    <p class="status" id="qrStatus"></p>
+  </section>
 
-<section class="card" id="resize">
-<h2>📐 Rasm o‘lchamini o‘zgartirish</h2>
-<label for="resizeFile">Rasm tanlang</label>
-<input id="resizeFile" type="file" accept="image/*">
-<label for="resizeWidth">Kengligi (px)</label>
-<input id="resizeWidth" type="number" min="1" max="10000" placeholder="800">
-<label for="resizeHeight">Balandligi (px)</label>
-<input id="resizeHeight" type="number" min="1" max="10000" placeholder="600">
-<label><input id="keepRatio" type="checkbox" checked> Rasm nisbatini saqlash</label>
-<label for="resizeFormat">Format</label>
-<select id="resizeFormat">
-<option value="image/jpeg">JPG</option>
-<option value="image/png">PNG</option>
-</select>
-<button id="resizeBtn" type="button">O‘lchamni o‘zgartirish</button>
-<div id="resizeStatus" class="status"></div>
-<img id="resizePreview" class="preview" alt="" hidden>
-<a id="resizeDownload" class="download" hidden>Yangi rasmni yuklab olish</a>
-</section>
+  <!-- RASM SIQISH -->
+  <section class="panel" id="compress">
+    <h2>📷 Rasm hajmini siqish</h2>
+    <label for="compressFile">Rasmni tanlang</label>
+    <input id="compressFile" type="file" accept="image/*">
 
-<p class="small">QR kod yaratish uchun internet kerak. Rasmni siqish va o‘lchamini o‘zgartirish brauzerda bajariladi.</p>
+    <label for="quality">Sifat: <span id="qualityValue">70</span>%</label>
+    <input id="quality" type="range" min="10" max="95" value="70">
+
+    <div class="info">
+      Siqish natijasi rasm formati va mazmuniga bog‘liq.
+      Ayrim rasmlarda hajm ancha kamayadi, ayrimlarida esa kamroq.
+    </div>
+
+    <button class="action" id="compressBtn">Rasmni siqish</button>
+    <div class="preview" id="compressPreview"></div>
+    <button class="action secondary" id="downloadCompressed" hidden>
+      ⬇️ Siqilgan rasmni saqlash
+    </button>
+    <p class="status" id="compressStatus"></p>
+  </section>
+
+  <!-- RASM O'LCHAMINI O'ZGARTIRISH -->
+  <section class="panel" id="resize">
+    <h2>📐 Rasm o‘lchamini o‘zgartirish</h2>
+
+    <label for="resizeFile">Rasmni tanlang</label>
+    <input id="resizeFile" type="file" accept="image/*">
+
+    <div class="info" id="originalInfo">
+      Avval rasm tanlang. Uning asl kengligi va balandligi ko‘rsatiladi.
+    </div>
+
+    <label for="resizeWidth">Yangi kenglik (px)</label>
+    <input id="resizeWidth" type="number" min="1" max="12000" value="500">
+
+    <label for="resizeHeight">Yangi balandlik (px)</label>
+    <input id="resizeHeight" type="number" min="1" max="12000" value="500">
+
+    <label>
+      <input id="keepRatio" type="checkbox" checked>
+      Rasm nisbatini saqlash
+    </label>
+
+    <label for="resizeFormat">Saqlash formati</label>
+    <select id="resizeFormat">
+      <option value="image/png">PNG</option>
+      <option value="image/jpeg">JPG</option>
+      <option value="image/webp">WebP</option>
+    </select>
+
+    <label for="resizeQuality">Saqlash sifati: <span id="resizeQualityValue">85</span>%</label>
+    <input id="resizeQuality" type="range" min="10" max="100" value="85">
+
+    <button class="action" id="resizeBtn">O‘lchamni o‘zgartirish</button>
+
+    <div class="preview" id="resizePreview"></div>
+    <button class="action secondary" id="downloadResized" hidden>
+      ⬇️ Yangi rasmni saqlash
+    </button>
+    <p class="status" id="resizeStatus"></p>
+  </section>
 </main>
 
+<footer>QuickTools © 2026 · Oddiy va bepul vositalar</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-(function(){
-const $=id=>document.getElementById(id);
+"use strict";
 
-$("makeQr").addEventListener("click",function(){
-const value=$("qrText").value.trim();
-const status=$("qrStatus"),result=$("qrResult");
-result.replaceChildren();
-if(!value){status.textContent="Avval matn yoki havola kiriting.";return;}
-status.textContent="QR kod tayyorlanmoqda...";
-const img=document.createElement("img");
-img.alt="Yaratilgan QR kod";
-img.src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&data="+encodeURIComponent(value);
-img.onload=()=>status.textContent="QR kod tayyor!";
-img.onerror=()=>status.textContent="QR kod yaratilmadi. Internetni tekshiring.";
-result.appendChild(img);
-const link=document.createElement("a");
-link.className="download";
-link.textContent="QR kodni ochish yoki saqlash";
-link.href=img.src;
-link.target="_blank";
-link.rel="noopener";
-result.appendChild(link);
-});
+const $ = id => document.getElementById(id);
 
-$("quality").addEventListener("input",function(){
-$("qualityValue").textContent=this.value+"%";
-});
-
-function loadImage(file,callback,status){
-if(!file){status.textContent="Avval rasm tanlang.";return;}
-if(!file.type.startsWith("image/")){status.textContent="Rasm faylini tanlang.";return;}
-const url=URL.createObjectURL(file);
-const img=new Image();
-img.onload=()=>callback(img,url);
-img.onerror=()=>{URL.revokeObjectURL(url);status.textContent="Rasm ochilmadi. Boshqa rasm tanlang.";};
-img.src=url;
+function setStatus(id, message) {
+  $(id).textContent = message;
 }
 
-$("compressBtn").addEventListener("click",function(){
-const status=$("compressStatus"),link=$("compressDownload"),preview=$("compressPreview");
-link.hidden=true;preview.hidden=true;
-loadImage($("compressFile").files[0],function(img,url){
-try{
-const canvas=document.createElement("canvas");
-canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;
-canvas.getContext("2d").drawImage(img,0,0);
-canvas.toBlob(function(blob){
-URL.revokeObjectURL(url);
-if(!blob){status.textContent="Rasmni siqib bo‘lmadi.";return;}
-const out=URL.createObjectURL(blob);
-preview.src=out;preview.hidden=false;
-link.href=out;link.hidden=false;
-status.textContent="Tayyor! Yangi hajm: "+Math.round(blob.size/1024)+" KB";
-},"image/jpeg",Number($("quality").value)/100);
-}catch(e){URL.revokeObjectURL(url);status.textContent="Xatolik yuz berdi.";}
-},status);
+function formatBytes(bytes) {
+  if (bytes < 1024) return bytes + " bayt";
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+  return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+}
+
+function loadImage(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve(img);
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Rasmni ochib bo‘lmadi."));
+    };
+
+    img.src = url;
+  });
+}
+
+function canvasToBlob(canvas, type, quality) {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(blob => {
+      if (blob) resolve(blob);
+      else reject(new Error("Rasmni saqlab bo‘lmadi."));
+    }, type, quality);
+  });
+}
+
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 30000);
+}
+
+function safeName(name) {
+  return name.replace(/\.[^/.]+$/, "").replace(/[^\w-]/g, "_") || "rasm";
+}
+
+/* TABLAR */
+document.querySelectorAll(".tab").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+    button.classList.add("active");
+    $(button.dataset.tab).classList.add("active");
+  });
 });
 
-$("resizeFile").addEventListener("change",function(){
-const status=$("resizeStatus");
-loadImage(this.files[0],function(img,url){
-$("resizeWidth").value=img.naturalWidth;
-$("resizeHeight").value=img.naturalHeight;
-status.textContent="Rasm yuklandi: "+img.naturalWidth+" × "+img.naturalHeight+" px";
-URL.revokeObjectURL(url);
-},status);
+/* QR-KOD */
+let qrReady = false;
+
+$("makeQR").addEventListener("click", () => {
+  const text = $("qrText").value.trim();
+
+  if (!text) {
+    setStatus("qrStatus", "Avval matn yoki havola kiriting.");
+    return;
+  }
+
+  if (typeof QRCode === "undefined") {
+    setStatus("qrStatus", "QR-kod kutubxonasi yuklanmadi. Internetni tekshiring.");
+    return;
+  }
+
+  $("qrOutput").innerHTML = "";
+  $("downloadQR").hidden = true;
+  qrReady = false;
+
+  try {
+    new QRCode($("qrOutput"), {
+      text: text,
+      width: 256,
+      height: 256,
+      correctLevel: QRCode.CorrectLevel.H
+    });
+
+    qrReady = true;
+    $("downloadQR").hidden = false;
+    setStatus("qrStatus", "QR-kod tayyor.");
+  } catch (error) {
+    setStatus("qrStatus", "QR-kod yaratilmadi. Boshqa matn kiriting.");
+  }
 });
 
-$("resizeBtn").addEventListener("click",function(){
-const file=$("resizeFile").files[0],status=$("resizeStatus");
-const link=$("resizeDownload"),preview=$("resizePreview");
-link.hidden=true;preview.hidden=true;
-let w=Number($("resizeWidth").value),h=Number($("resizeHeight").value);
-if(!file){status.textContent="Avval rasm tanlang.";return;}
-if(!Number.isInteger(w)||!Number.isInteger(h)||w<1||h<1||w>10000||h>10000){
-status.textContent="Kenglik va balandlikni 1–10000 oralig‘ida kiriting.";return;
-}
-loadImage(file,function(img,url){
-if($("keepRatio").checked){
-const ratio=img.naturalWidth/img.naturalHeight;
-if(w/h>ratio)w=Math.round(h*ratio);
-else h=Math.round(w/ratio);
-}
-try{
-const canvas=document.createElement("canvas");
-canvas.width=w;canvas.height=h;
-canvas.getContext("2d").drawImage(img,0,0,w,h);
-const format=$("resizeFormat").value;
-canvas.toBlob(function(blob){
-URL.revokeObjectURL(url);
-if(!blob){status.textContent="Rasm tayyorlanmadi.";return;}
-const out=URL.createObjectURL(blob);
-preview.src=out;preview.hidden=false;
-link.href=out;
-link.download=format==="image/png"?"quicktools-resized.png":"quicktools-resized.jpg";
-link.textContent="Rasmni yuklab olish ("+w+" × "+h+")";
-link.hidden=false;
-status.textContent="Tayyor: "+w+" × "+h+" px";
-},format,0.85);
-}catch(e){URL.revokeObjectURL(url);status.textContent="Xatolik yuz berdi.";}
-},status);
+$("downloadQR").addEventListener("click", async () => {
+  if (!qrReady) return;
+
+  try {
+    const canvas = $("qrOutput").querySelector("canvas");
+    if (canvas) {
+      const blob = await canvasToBlob(canvas, "image/png");
+      downloadBlob(blob, "quicktools-qr.png");
+      return;
+    }
+
+    const img = $("qrOutput").querySelector("img");
+    if (img && img.src) {
+      const response = await fetch(img.src);
+      if (!response.ok) throw new Error("QR-kodni olish muvaffaqiyatsiz.");
+      const blob = await response.blob();
+      downloadBlob(blob, "quicktools-qr.png");
+      return;
+    }
+
+    setStatus("qrStatus", "QR-kod rasmi topilmadi.");
+  } catch (error) {
+    setStatus("qrStatus", "Yuklab olish amalga oshmadi. Qayta urinib ko‘ring.");
+  }
 });
-})();
+
+/* RASM SIQISH */
+$("quality").addEventListener("input", () => {
+  $("qualityValue").textContent = $("quality").value;
+});
+
+let compressedBlob = null;
+
+$("compressFile").addEventListener("change", () => {
+  compressedBlob = null;
+  $("downloadCompressed").hidden = true;
+  $("compressPreview").innerHTML = "";
+  const file = $("compressFile").files[0];
+  setStatus("compressStatus", file ? "Tanlandi: " + file.name + " (" + formatBytes(file.size) + ")" : "");
+});
+
+$("compressBtn").addEventListener("click", async () => {
+  const file = $("compressFile").files[0];
+
+  if (!file) {
+    setStatus("compressStatus", "Avval rasm tanlang.");
+    return;
+  }
+
+  if (!file.type.startsWith("image/")) {
+    setStatus("compressStatus", "Iltimos, rasm faylini tanlang.");
+    return;
+  }
+
+  $("compressBtn").disabled = true;
+  setStatus("compressStatus", "Rasm siqilmoqda...");
+
+  try {
+    const img = await loadImage(file);
+    const canvas = document.createElement("canvas");
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+
+    let type = file.type;
+    if (!["image/jpeg", "image/webp", "image/png"].includes(type)) {
+      type = "image/jpeg";
+    }
+
+    const quality = Number($("quality").value) / 100;
+    compressedBlob = await canvasToBlob(canvas, type, quality);
+
+    $("compressPreview").innerHTML = "";
+    const preview = document.createElement("img");
+    preview.alt = "Siqilgan rasm";
+    preview.src = URL.createObjectURL(compressedBlob);
+    $("compressPreview").appendChild(preview);
+
+    const saved = file.size - compressedBlob.size;
+    const message = saved > 0
+      ? "Asl hajm: " + formatBytes(file.size) +
+        " · Yangi hajm: " + formatBytes(compressedBlob.size) +
+        " · Tejaldi: " + formatBytes(saved)
+      : "Yangi hajm: " + formatBytes(compressedBlob.size) +
+        ". Bu formatda hajm kamaymadi. Sifatni pasaytirib qayta urinib ko‘ring.";
+
+    setStatus("compressStatus", message);
+    $("downloadCompressed").hidden = false;
+  } catch (error) {
+    setStatus("compressStatus", "Xatolik: rasmni siqib bo‘lmadi.");
+  } finally {
+    $("compressBtn").disabled = false;
+  }
+});
+
+$("downloadCompressed").addEventListener("click", () => {
+  if (!compressedBlob) return;
+  const file = $("compressFile").files[0];
+  const ext = compressedBlob.type === "image/png" ? "png" :
+              compressedBlob.type === "image/webp" ? "webp" : "jpg";
+  downloadBlob(compressedBlob, safeName(file.name) + "_siqilgan." + ext);
+});
+
+/* RASM O'LCHAMINI O'ZGARTIRISH */
+let resizeImage = null;
+let resizedBlob = null;
+let resizeOriginalName = "rasm";
+let ratio = 1;
+let changingDimensions = false;
+
+$("resizeQuality").addEventListener("input", () => {
+  $("resizeQualityValue").textContent = $("resizeQuality").value;
+});
+
+$("resizeFile").addEventListener("change", async () => {
+  const file = $("resizeFile").files[0];
+  resizeImage = null;
+  resizedBlob = null;
+  $("downloadResized").hidden = true;
+  $("resizePreview").innerHTML = "";
+
+  if (!file) {
+    setStatus("resizeStatus", "");
+    return;
+  }
+
+  if (!file.type.startsWith("image/")) {
+    setStatus("resizeStatus", "Iltimos, rasm faylini tanlang.");
+    return;
+  }
+
+  try {
+    resizeImage = await loadImage(file);
+    resizeOriginalName = safeName(file.name);
+    ratio = resizeImage.naturalWidth / resizeImage.naturalHeight;
+
+    $("resizeWidth").value = resizeImage.naturalWidth;
+    $("resizeHeight").value = resizeImage.naturalHeight;
+
+    $("originalInfo").textContent =
+      "Asl o‘lcham: " + resizeImage.naturalWidth + " × " +
+      resizeImage.naturalHeight + " px · Hajmi: " + formatBytes(file.size);
+
+    setStatus("resizeStatus", "Rasm tayyor. Kerakli o‘lchamni kiriting.");
+  } catch (error) {
+    setStatus("resizeStatus", "Rasm ochilmadi. Boshqa rasm tanlang.");
+  }
+});
+
+$("resizeWidth").addEventListener("input", () => {
+  if (!resizeImage || !$("keepRatio").checked || changingDimensions) return;
+
+  const width = Number($("resizeWidth").value);
+  if (width > 0) {
+    changingDimensions = true;
+    $("resizeHeight").value = Math.max(1, Math.round(width / ratio));
+    changingDimensions = false;
+  }
+});
+
+$("resizeHeight").addEventListener("input", () => {
+  if (!resizeImage || !$("keepRatio").checked || changingDimensions) return;
+
+  const height = Number($("resizeHeight").value);
+  if (height > 0) {
+    changingDimensions = true;
+    $("resizeWidth").value = Math.max(1, Math.round(height * ratio));
+    changingDimensions = false;
+  }
+});
+
+$("resizeBtn").addEventListener("click", async () => {
+  if (!resizeImage) {
+    setStatus("resizeStatus", "Avval rasm tanlang.");
+    return;
+  }
+
+  const width = Number($("resizeWidth").value);
+  const height = Number($("resizeHeight").value);
+
+  if (!Number.isInteger(width) || !Number.isInteger(height) ||
+      width < 1 || height < 1 || width > 12000 || height > 12000) {
+    setStatus("resizeStatus", "Kenglik va balandlik 1–12000 px oralig‘ida bo‘lsin.");
+    return;
+  }
+
+  if (width * height > 40000000) {
+    setStatus("resizeStatus", "Bu o‘lcham juda katta. Kichikroq o‘lcham kiriting.");
+    return;
+  }
+
+  $("resizeBtn").disabled = true;
+  $("downloadResized").hidden = true;
+  setStatus("resizeStatus", "Rasm tayyorlanmoqda...");
+
+  try {
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("Canvas ishlamadi.");
+
+    const format = $("resizeFormat").value;
+    if (format === "image/jpeg") {
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, width, height);
+    }
+
+    ctx.drawImage(resizeImage, 0, 0, width, height);
+
+    const quality = Number($("resizeQuality").value) / 100;
+    resizedBlob = await canvasToBlob(canvas, format, quality);
+
+    $("resizePreview").innerHTML = "";
+    const preview = document.createElement("img");
+    preview.alt = "O‘lchami o‘zgartirilgan rasm";
+    preview.src = URL.createObjectURL(resizedBlob);
+    $("resizePreview").appendChild(preview);
+
+    setStatus("resizeStatus",
+      "Tayyor: " + width + " × " + height + " px · Yangi hajm: " +
+      formatBytes(resizedBlob.size));
+
+    $("downloadResized").hidden = false;
+  } catch (error) {
+    setStatus("resizeStatus", "Xatolik: rasmni o‘zgartirib bo‘lmadi.");
+  } finally {
+    $("resizeBtn").disabled = false;
+  }
+});
+
+$("downloadResized").addEventListener("click", () => {
+  if (!resizedBlob) return;
+
+  const ext = resizedBlob.type === "image/png" ? "png" :
+              resizedBlob.type === "image/webp" ? "webp" : "jpg";
+
+  downloadBlob(resizedBlob, resizeOriginalName + "_yangi." + ext);
+});
 </script>
 </body>
 </html>
