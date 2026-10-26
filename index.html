@@ -2,189 +2,256 @@
 <html lang="uz">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2563eb">
   <title>QuickTools</title>
 
   <style>
-    * {
-      box-sizing: border-box;
+    * { box-sizing: border-box; }
+
+    body {
       margin: 0;
-      padding: 0;
+      background: #f1f5f9;
+      color: #172033;
       font-family: Arial, sans-serif;
     }
 
-    body {
-      background: #f4f6f8;
-      color: #111827;
-      padding-bottom: 30px;
-    }
-
     header {
-      background: #2563eb;
+      padding: 26px 18px;
+      text-align: center;
       color: white;
-      padding: 22px 18px;
-      text-align: center;
-      border-radius: 0 0 22px 22px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      border-radius: 0 0 25px 25px;
     }
 
-    header h1 {
-      font-size: 28px;
-      margin-bottom: 6px;
+    header h1 { margin: 0 0 8px; font-size: 30px; }
+    header p { margin: 0; font-size: 14px; }
+
+    main {
+      width: min(100% - 28px, 500px);
+      margin: 22px auto;
     }
 
-    header p {
-      opacity: 0.9;
-      font-size: 14px;
+    .card {
+      background: white;
+      padding: 22px;
+      border-radius: 20px;
+      box-shadow: 0 5px 20px #0f172a0c;
+      margin-bottom: 18px;
     }
 
-    .container {
-      max-width: 600px;
-      margin: auto;
-      padding: 18px;
-    }
+    h2 { font-size: 21px; margin: 0 0 10px; }
+    .muted { color: #64748b; font-size: 14px; line-height: 1.5; }
 
-    .section-title {
-      font-size: 18px;
+    label {
+      display: block;
       font-weight: bold;
-      margin: 10px 0 14px;
-    }
-
-    .tools {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-
-    .tool {
-      background: white;
-      border-radius: 18px;
-      padding: 20px 12px;
-      text-align: center;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.07);
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .tool:active {
-      transform: scale(0.96);
-    }
-
-    .icon {
-      font-size: 34px;
-      margin-bottom: 10px;
-    }
-
-    .tool h3 {
-      font-size: 15px;
-      margin-bottom: 5px;
-    }
-
-    .tool p {
-      color: #6b7280;
-      font-size: 12px;
-    }
-
-    .welcome {
-      background: white;
-      border-radius: 18px;
-      padding: 18px;
-      margin-bottom: 20px;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.06);
-    }
-
-    .welcome h2 {
-      margin-bottom: 8px;
-    }
-
-    .welcome p {
-      color: #6b7280;
-      line-height: 1.5;
+      margin: 18px 0 8px;
       font-size: 14px;
     }
+
+    textarea {
+      width: 100%;
+      min-height: 105px;
+      resize: vertical;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 13px;
+      font: inherit;
+      font-size: 16px;
+      outline-color: #2563eb;
+    }
+
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+
+    .primary { background: #2563eb; color: white; }
+    .secondary { background: #e2e8f0; color: #172033; }
+
+    #result {
+      display: none;
+      text-align: center;
+      margin-top: 22px;
+    }
+
+    #qrImage {
+      width: 240px;
+      max-width: 100%;
+      display: block;
+      margin: 16px auto;
+      border: 8px solid white;
+    }
+
+    .error { color: #dc2626; font-size: 14px; }
 
     footer {
       text-align: center;
-      color: #9ca3af;
+      color: #64748b;
       font-size: 12px;
-      margin-top: 25px;
+      padding: 15px;
     }
   </style>
 </head>
 
 <body>
-
   <header>
     <h1>⚡ QuickTools</h1>
-    <p>Telefon uchun qulay bepul vositalar</p>
+    <p>Bepul va qulay telefon vositalari</p>
   </header>
 
-  <main class="container">
-
-    <div class="welcome">
+  <main>
+    <section class="card">
       <h2>👋 Xush kelibsiz!</h2>
-      <p>
-        QuickTools orqali rasmlar, QR kodlar va boshqa
-        foydali vositalardan foydalanishingiz mumkin.
+      <p class="muted">
+        Kerakli vositani tanlang. Hozir QR kod yaratish
+        funksiyasidan foydalanishingiz mumkin.
       </p>
-    </div>
+    </section>
 
-    <div class="section-title">
-      🛠 Vositalar
-    </div>
+    <section class="card">
+      <h2>🔲 QR kod yaratish</h2>
+      <p class="muted">
+        Matn yoki havolani kiriting va QR kod yarating.
+      </p>
 
-    <div class="tools">
+      <label for="qrText">Matn yoki havola</label>
+      <textarea id="qrText"
+        maxlength="2000"
+        placeholder="Masalan: https://telegram.org"></textarea>
 
-      <div class="tool" onclick="openTool('compress')">
-        <div class="icon">🗜️</div>
-        <h3>Rasm siqish</h3>
-        <p>Rasm hajmini kamaytirish</p>
+      <button class="primary" id="createBtn">
+        ✨ QR kod yaratish
+      </button>
+
+      <p id="message" class="error" role="status"></p>
+
+      <div id="result">
+        <h3>QR kodingiz tayyor!</h3>
+        <img id="qrImage" alt="Yaratilgan QR kod">
+        <button class="primary" id="saveBtn">
+          📥 PNG sifatida saqlash
+        </button>
+        <button class="secondary" id="resetBtn">
+          🔄 Yangidan yaratish
+        </button>
       </div>
+    </section>
 
-      <div class="tool" onclick="openTool('resize')">
-        <div class="icon">📐</div>
-        <h3>Rasm o‘lchami</h3>
-        <p>O‘lchamni o‘zgartirish</p>
-      </div>
-
-      <div class="tool" onclick="openTool('qr')">
-        <div class="icon">🔲</div>
-        <h3>QR kod</h3>
-        <p>QR kod yaratish</p>
-      </div>
-
-      <div class="tool" onclick="openTool('text')">
-        <div class="icon">📝</div>
-        <h3>Matn vositasi</h3>
-        <p>Matn bilan ishlash</p>
-      </div>
-
-    </div>
-
-    <footer>
-      QuickTools © 2026
-    </footer>
-
+    <section class="card">
+      <h2>🛠 Boshqa vositalar</h2>
+      <p class="muted">
+        📷 Rasm siqish — keyingi yangilanishda.<br><br>
+        📐 Rasm o‘lchamini o‘zgartirish — keyingi yangilanishda.<br><br>
+        📝 Matn vositasi — keyingi yangilanishda.
+      </p>
+    </section>
   </main>
 
+  <footer>QuickTools © 2026</footer>
+
   <script>
-    function openTool(tool) {
-      if (tool === "compress") {
-        alert("Rasm siqish funksiyasi tez orada qo‘shiladi.");
+    const textInput = document.getElementById("qrText");
+    const createBtn = document.getElementById("createBtn");
+    const saveBtn = document.getElementById("saveBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const result = document.getElementById("result");
+    const qrImage = document.getElementById("qrImage");
+    const message = document.getElementById("message");
+
+    let currentQR = "";
+
+    createBtn.addEventListener("click", async () => {
+      const value = textInput.value.trim();
+
+      message.textContent = "";
+      result.style.display = "none";
+
+      if (!value) {
+        message.textContent = "Iltimos, avval matn yoki havola yozing.";
+        return;
       }
 
-      if (tool === "resize") {
-        alert("Rasm o‘lchamini o‘zgartirish funksiyasi tez orada qo‘shiladi.");
-      }
+      createBtn.disabled = true;
+      createBtn.textContent = "Yaratilmoqda...";
 
-      if (tool === "qr") {
-        alert("QR kod yaratish funksiyasi tez orada qo‘shiladi.");
-      }
+      try {
+        const url = new URL(
+          "https://api.qrserver.com/v1/create-qr-code/"
+        );
 
-      if (tool === "text") {
-        alert("Matn vositasi tez orada qo‘shiladi.");
+        url.searchParams.set("size", "400x400");
+        url.searchParams.set("data", value);
+        url.searchParams.set("format", "png");
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error("QR xizmatida xatolik.");
+        }
+
+        const blob = await response.blob();
+
+        if (!blob.type.includes("image")) {
+          throw new Error("Rasm yaratilmadi.");
+        }
+
+        currentQR = URL.createObjectURL(blob);
+        qrImage.src = currentQR;
+        result.style.display = "block";
+      } catch (error) {
+        message.textContent =
+          "QR yaratilmadi. Internetni tekshirib, qayta urinib ko‘ring.";
+      } finally {
+        createBtn.disabled = false;
+        createBtn.textContent = "✨ QR kod yaratish";
       }
-    }
+    });
+
+    saveBtn.addEventListener("click", async () => {
+      if (!currentQR) return;
+
+      try {
+        const response = await fetch(currentQR);
+        const blob = await response.blob();
+        const file = new File([blob], "QuickTools-QR.png", {
+          type: "image/png"
+        });
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: "QuickTools QR kodi"
+          });
+        } else {
+          const link = document.createElement("a");
+          link.href = currentQR;
+          link.download = "QuickTools-QR.png";
+          link.click();
+        }
+      } catch (error) {
+        message.textContent =
+          "Saqlash amalga oshmadi. QR kodni qayta yarating.";
+      }
+    });
+
+    resetBtn.addEventListener("click", () => {
+      textInput.value = "";
+      result.style.display = "none";
+      message.textContent = "";
+
+      if (currentQR) URL.revokeObjectURL(currentQR);
+      currentQR = "";
+
+      textInput.focus();
+    });
   </script>
-
 </body>
 </html>
